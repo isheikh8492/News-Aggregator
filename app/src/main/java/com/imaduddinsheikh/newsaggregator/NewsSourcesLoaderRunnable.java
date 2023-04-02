@@ -30,7 +30,8 @@ public class NewsSourcesLoaderRunnable implements Runnable {
 
     private static RequestQueue queue;
 
-    private static final String API_URL = "https://newsapi.org/v2/sources?apiKey=647ca397f32c4df8a591a2e8320429e5";
+    private static final String API_URL = "https://newsapi.org/v2/sources";
+    private static final String APIKey = "647ca397f32c4df8a591a2e8320429e5";
 
     public NewsSourcesLoaderRunnable(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
@@ -40,10 +41,9 @@ public class NewsSourcesLoaderRunnable implements Runnable {
     public void run() {
         queue = Volley.newRequestQueue(mainActivity);
 
-//        Uri.Builder buildURL = Uri.parse(officialAPIUrl).buildUpon();
-//        buildURL.appendQueryParameter("key", APIKey);
-//        buildURL.appendQueryParameter("address", location);
-        String urlToUse = API_URL;
+        Uri.Builder buildURL = Uri.parse(API_URL).buildUpon();
+        buildURL.appendQueryParameter("apiKey", APIKey);
+        String urlToUse = buildURL.toString();
 
         Response.Listener<JSONObject> listener =
                 response -> parseJSON(response.toString());
