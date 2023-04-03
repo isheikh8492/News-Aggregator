@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.app.Application;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
@@ -109,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
         arrayAdapter = new ArrayAdapter<>(this, R.layout.drawer_item, tempList);
         mDrawerList.setAdapter(arrayAdapter);
         arrayAdapter.notifyDataSetChanged();
+        setTitle(getTitle() + " (" + arrayAdapter.getCount() + ")");
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
