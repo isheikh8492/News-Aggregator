@@ -13,23 +13,14 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NewsSourcesLoaderRunnable implements Runnable {
-    private static final String TAG = "NewsSourcesLoaderRunnable";
+public class NewsArticlesLoaderRunnable implements Runnable{
+    private static final String TAG = "NewsArticlesLoaderRunnable";
 
     private final MainActivity mainActivity;
-
-    private final ArrayList<NewsSource> newsSourceList =
-            new ArrayList<>();
 
     private final ArrayList<NewsArticle> newsArticleList =
             new ArrayList<>();
@@ -39,7 +30,7 @@ public class NewsSourcesLoaderRunnable implements Runnable {
     private static final String API_URL = "https://newsapi.org/v2/sources";
     private static final String APIKey = "647ca397f32c4df8a591a2e8320429e5";
 
-    public NewsSourcesLoaderRunnable(MainActivity mainActivity) {
+    public NewsArticlesLoaderRunnable(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
     }
 
@@ -47,9 +38,10 @@ public class NewsSourcesLoaderRunnable implements Runnable {
     public void run() {
         queue = Volley.newRequestQueue(mainActivity);
 
-        Uri.Builder buildURL = Uri.parse(API_URL).buildUpon();
-        buildURL.appendQueryParameter("apiKey", APIKey);
-        String urlToUse = buildURL.toString();
+//        Uri.Builder buildURL = Uri.parse(API_URL).buildUpon();
+//        buildURL.appendQueryParameter("apiKey", APIKey);
+//        String urlToUse = buildURL.toString();
+        String urlToUse = "https://newsapi.org/v2/top-headlines?sources=cnn&apiKey=647ca397f32c4df8a591a2e8320429e5";
 
         Response.Listener<JSONObject> listener =
                 response -> parseJSON(response.toString());
@@ -60,13 +52,13 @@ public class NewsSourcesLoaderRunnable implements Runnable {
         // Request a string response from the provided URL.
         JsonObjectRequest jsonObjectRequest =
                 new JsonObjectRequest(Request.Method.GET, urlToUse, null, listener, error) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("User-Agent", "News-App");
-                return headers;
-            }
-        };
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> headers = new HashMap<>();
+                        headers.put("User-Agent", "News-App");
+                        return headers;
+                    }
+                };
 
         // Add the request to the RequestQueue.
         queue.add(jsonObjectRequest);
@@ -84,8 +76,6 @@ public class NewsSourcesLoaderRunnable implements Runnable {
             mainActivity.runOnUiThread(mainActivity::downloadFailed);
             return;
         }
-
-        ArrayList<NewsSource> newsSourceList;
         mainActivity.runOnUiThread(
                 mainActivity.updateData(newsArticleList));
     }
@@ -96,21 +86,27 @@ public class NewsSourcesLoaderRunnable implements Runnable {
         try {
             JSONObject jObjMain = new JSONObject(s);
 
-            // "sources" section
-            JSONArray sources = jObjMain.getJSONArray("sources");
-            Log.d(TAG, "parseJSON: " + sources.length());
+            // "articles" section
+            JSONArray articles = jObjMain.getJSONArray("articles");
 
-            for (int i = 0; i < sources.length(); i++) {
-                JSONObject source = sources.getJSONObject(i);
-                Log.d(TAG, "parseJSON: " + source.toString());
+            for (int i = 0; i < articles.length(); i++) {
+                JSONObject article = articles.getJSONObject(i);
 
-                String jId = source.getString("id");
-                String jName = source.getString("name");
-                String jCategory = source.getString("category");
+                String jAuthor = article.getString("author");
+                String jTitle = article.getString("title");
+                String jDescription = article.getString("description");
+                String jUrl = article.getString("url");
+                String jImageUrl = article.getString("urlToImage");
+                String jPublishDate = article.getString("publishedAt");
+                String[] jSource = new String[]{
+                        article.getJSONObject("source").getString("id"),
+                        article.getJSONObject("source").getString("name")
+                };
 
-                newsSourceList.add(new NewsSource(jId, jName, jCategory));
+
+                newsArticleList.add(new NewsArticle(jAuthor, jTitle, jDescription, jUrl, jImageUrl, jPublishDate, jSource));
             }
-//            mainActivity.updateData(newsSourceList);
+            mainActivity.updateData(newsArticleList);
         } catch (Exception e) {
             e.printStackTrace();
         }
