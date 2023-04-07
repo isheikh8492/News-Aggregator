@@ -44,6 +44,9 @@ public class MainActivity extends AppCompatActivity {
 
     private final HashMap<String, String> nameToId = new HashMap<>();
 
+    private final HashMap<String, ArrayList<String>> currentNSourceCategories
+            = new HashMap<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,9 +82,16 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(nArticlesAdapter);
     }
 
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            Log.d(TAG, "onOptionsItemSelected: mDrawerToggle " + item);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
-        getMenuInflater().inflate(R.menu.action_menu, menu);
+        opt_menu = menu;
         return true;
     }
 
@@ -106,13 +116,6 @@ public class MainActivity extends AppCompatActivity {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            Log.d(TAG, "onOptionsItemSelected: mDrawerToggle " + item);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     public void downloadFailed() {
         Log.d(TAG, "downloadFailed: ");
@@ -134,13 +137,20 @@ public class MainActivity extends AppCompatActivity {
         return null;
     }
 
-    public Runnable updateNewsSourceData(ArrayList<NewsSource> newsSourceList) {
+    public Runnable updateNewsSourceData(ArrayList<NewsSource> newsSourceList,
+                                         HashMap<String, ArrayList<String>> categoryToName) {
         for (NewsSource ns : newsSourceList) {
             sourceDisplayed.add(ns.getName());
             if (!nameToId.containsKey(ns.getName()))
                 nameToId.put(ns.getName(), ns.getId());
         }
         Collections.sort(sourceDisplayed);
+
+        ArrayList<String> categoryList = new ArrayList<>(categoryToName.keySet());
+
+        Collections.sort(categoryList);
+        for (String c : categoryList)
+            opt_menu.add(c);
 
         setTitle(getTitle() + " (" + newsSourceList.size() + ")");
 

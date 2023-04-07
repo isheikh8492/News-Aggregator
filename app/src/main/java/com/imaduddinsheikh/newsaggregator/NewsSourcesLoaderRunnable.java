@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class NewsSourcesLoaderRunnable implements Runnable {
     private static final String TAG = "NewsSourcesLoaderRunnable";
@@ -30,6 +31,8 @@ public class NewsSourcesLoaderRunnable implements Runnable {
 
     private final ArrayList<NewsSource> newsSourceList =
             new ArrayList<>();
+
+    private final HashMap<String, ArrayList<String>> categoryToSourceName = new HashMap<>();
 
     private static RequestQueue queue;
 
@@ -83,7 +86,7 @@ public class NewsSourcesLoaderRunnable implements Runnable {
         }
 
         mainActivity.runOnUiThread(
-                mainActivity.updateNewsSourceData(newsSourceList));
+                mainActivity.updateNewsSourceData(newsSourceList, categoryToSourceName));
     }
 
     private String parseJSON(String s) {
@@ -93,17 +96,18 @@ public class NewsSourcesLoaderRunnable implements Runnable {
 
             // "sources" section
             JSONArray sources = jObjMain.getJSONArray("sources");
-
             for (int i = 0; i < sources.length(); i++) {
                 JSONObject source = sources.getJSONObject(i);
 
                 String jId = source.getString("id");
                 String jName = source.getString("name");
                 String jCategory = source.getString("category");
-
                 newsSourceList.add(new NewsSource(jId, jName, jCategory));
+                if (!categoryToSourceName.containsKey(jCategory))
+                    categoryToSourceName.put(jCategory, new ArrayList<>());
+                Objects.requireNonNull(categoryToSourceName.get(jCategory)).add(jName);
             }
-            mainActivity.updateNewsSourceData(newsSourceList);
+            mainActivity.updateNewsSourceData(newsSourceList, categoryToSourceName);
         } catch (Exception e) {
             e.printStackTrace();
         }
