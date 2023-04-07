@@ -1,5 +1,7 @@
 package com.imaduddinsheikh.newsaggregator;
 
+import androidx.annotation.NonNull;
+
 public class NewsSource {
     private final String id;
     private final String name;
@@ -21,5 +23,15 @@ public class NewsSource {
         this.id = id;
         this.name = name;
         this.category = category;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "NewsSource{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", category='" + category + '\'' +
+                '}';
     }
 }

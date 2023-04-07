@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private ActivityMainBinding binding;
 
-    private ArrayList <NewsSource> currentNSourcesList =  new ArrayList<>();
+    private ArrayList <NewsSource> currentNSourcesList;
     private ArrayList <NewsArticle> currentNArticlesList =  new ArrayList<>();
 
     private Menu opt_menu;
@@ -55,7 +55,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         setTitle("News Gateway");
 
-        new Thread(new NewsArticlesLoaderRunnable(this)).start();
+        if (currentNSourcesList == null) {
+            new Thread(new NewsSourcesLoaderRunnable(this)).start();
+        }
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mDrawerList = findViewById(R.id.drawer_list);
@@ -88,20 +90,20 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("NotifyDataSetChanged")
     private void selectItem(int position) {
-
         viewPager.setBackground(null);
-
         String selectedSource = sourceDisplayed.get(position);
         currentNArticlesList.clear();
         String selectedSourceId = nameToId.get(selectedSource);
         ArrayList<NewsArticle> articles = sourceToArticles.get(selectedSourceId);
-
         if (articles == null) {
             Toast.makeText(this,
                     MessageFormat.format("No articles found for {0}", selectedSource),
                     Toast.LENGTH_LONG).show();
             return;
         }
+
+        new Thread(new NewsArticlesLoaderRunnable(this)).start();
+
         currentNArticlesList.addAll(articles);
         nArticlesAdapter.notifyDataSetChanged();
         viewPager.setCurrentItem(0);
@@ -158,13 +160,21 @@ public class MainActivity extends AppCompatActivity {
     public Runnable updateData(ArrayList<NewsArticle> naList) {
         currentNArticlesList.addAll(naList);
         for (NewsArticle na : naList) {
-            sourceDisplayed.add(na.getSource()[1]);
-            if (!nameToId.containsKey(na.getSource()[1]))
-                nameToId.put(na.getSource()[1], na.getSource()[0]);
             if (!sourceToArticles.containsKey(na.getSource()[0]))
                 sourceToArticles.put(na.getSource()[0], new ArrayList<>());
             Objects.requireNonNull(sourceToArticles.get(na.getSource()[0])).add(na);
 
+        }
+        return null;
+    }
+
+    public Runnable updateNewsSourceData(ArrayList<NewsSource> newsSourceList) {
+        Log.d(TAG, "updateNewsSourceData: " + newsSourceList.toString());
+        currentNSourcesList = new ArrayList<>();
+        for (NewsSource ns : newsSourceList) {
+            sourceDisplayed.add(ns.getName());
+            if (!nameToId.containsKey(ns.getName()))
+                nameToId.put(ns.getName(), ns.getId());
         }
         Collections.sort(sourceDisplayed);
 
@@ -172,16 +182,11 @@ public class MainActivity extends AppCompatActivity {
         mDrawerList.setAdapter(arrayAdapter);
         arrayAdapter.notifyDataSetChanged();
 
-        setTitle(getTitle() + " (" + sourceDisplayed.size() + ")");
-
-//        nArticlesAdapter = new NewsArticleAdapter(this, currentNArticlesList);
-//        viewPager.setAdapter(nArticlesAdapter);
-
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
         }
+
         return null;
     }
-
 }

@@ -31,9 +31,6 @@ public class NewsSourcesLoaderRunnable implements Runnable {
     private final ArrayList<NewsSource> newsSourceList =
             new ArrayList<>();
 
-    private final ArrayList<NewsArticle> newsArticleList =
-            new ArrayList<>();
-
     private static RequestQueue queue;
 
     private static final String API_URL = "https://newsapi.org/v2/sources";
@@ -85,9 +82,8 @@ public class NewsSourcesLoaderRunnable implements Runnable {
             return;
         }
 
-        ArrayList<NewsSource> newsSourceList;
         mainActivity.runOnUiThread(
-                mainActivity.updateData(newsArticleList));
+                mainActivity.updateNewsSourceData(newsSourceList));
     }
 
     private String parseJSON(String s) {
@@ -98,7 +94,6 @@ public class NewsSourcesLoaderRunnable implements Runnable {
 
             // "sources" section
             JSONArray sources = jObjMain.getJSONArray("sources");
-            Log.d(TAG, "parseJSON: " + sources.length());
 
             for (int i = 0; i < sources.length(); i++) {
                 JSONObject source = sources.getJSONObject(i);
@@ -110,7 +105,7 @@ public class NewsSourcesLoaderRunnable implements Runnable {
 
                 newsSourceList.add(new NewsSource(jId, jName, jCategory));
             }
-//            mainActivity.updateData(newsSourceList);
+            mainActivity.updateNewsSourceData(newsSourceList);
         } catch (Exception e) {
             e.printStackTrace();
         }
