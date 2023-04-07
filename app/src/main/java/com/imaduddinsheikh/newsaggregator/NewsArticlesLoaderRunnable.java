@@ -87,8 +87,6 @@ public class NewsArticlesLoaderRunnable implements Runnable{
     }
 
     private String parseJSON(String s) {
-        Log.d(TAG, "parseJSON: " + s);
-
         try {
             JSONObject jObjMain = new JSONObject(s);
 
