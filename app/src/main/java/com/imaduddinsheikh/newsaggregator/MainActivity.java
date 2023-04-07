@@ -87,12 +87,17 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "onOptionsItemSelected: mDrawerToggle " + item);
             return true;
         }
-        sourceDisplayed.clear();
-        if (sourceCategoriesToName.get(item.getTitle().toString()) != null) {
-            sourceDisplayed.addAll(Objects.requireNonNull(sourceCategoriesToName.get(item.getTitle().toString())));
+        if (!item.getTitle().toString().equals("All")) {
+            sourceDisplayed.clear();
+            if (sourceCategoriesToName.get(item.getTitle().toString()) != null) {
+                sourceDisplayed.addAll(Objects.requireNonNull(sourceCategoriesToName.get(item.getTitle().toString())));
+            }
+            changeTitle();
+            arrayAdapter.notifyDataSetChanged();
+        } else {
+            sourceDisplayed.clear();
+            new Thread(new NewsSourcesLoaderRunnable(this)).start();
         }
-        changeTitle();
-        arrayAdapter.notifyDataSetChanged();
         return super.onOptionsItemSelected(item);
     }
     @Override
@@ -153,10 +158,13 @@ public class MainActivity extends AppCompatActivity {
         Collections.sort(sourceDisplayed);
 
         sourceCategoriesToName = categoryToName;
-        ArrayList<String> tempList = new ArrayList<>(sourceCategoriesToName.keySet());
-        Collections.sort(tempList);
-        for (String c : tempList)
-            opt_menu.add(c);
+        if (opt_menu.size() == 0) {
+            ArrayList<String> tempList = new ArrayList<>(sourceCategoriesToName.keySet());
+            tempList.add(0, "All");
+            Collections.sort(tempList);
+            for (String c : tempList)
+                opt_menu.add(c);
+        }
         changeTitle();
 
         arrayAdapter = new ArrayAdapter<>(this, R.layout.drawer_item, sourceDisplayed);
@@ -171,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void changeTitle(String... args) {
         if (args.length > 0) {
-            setTitle(args[0] + " (" + sourceDisplayed.size() + ")");
+            setTitle(args[0] + " (" + currentNArticlesList.size() + ")");
         } else {
             setTitle("News Gateway (" + sourceDisplayed.size() + ")");
         }
