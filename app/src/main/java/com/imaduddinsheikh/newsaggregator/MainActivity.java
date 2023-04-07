@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final HashMap<String, String> nameToId = new HashMap<>();
 
-    private final HashMap<String, ArrayList<String>> currentNSourceCategories
+    private HashMap<String, ArrayList<String>> sourceCategoriesToName
             = new HashMap<>();
 
     @Override
@@ -87,6 +87,12 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "onOptionsItemSelected: mDrawerToggle " + item);
             return true;
         }
+        sourceDisplayed.clear();
+        if (sourceCategoriesToName.get(item.getTitle().toString()) != null) {
+            sourceDisplayed.addAll(Objects.requireNonNull(sourceCategoriesToName.get(item.getTitle().toString())));
+        }
+        changeTitle();
+        arrayAdapter.notifyDataSetChanged();
         return super.onOptionsItemSelected(item);
     }
     @Override
@@ -133,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         mDrawerLayout.closeDrawer(mDrawerList);
-        setTitle(sourceName + " (" + currentNArticlesList.size() + ")");
+        changeTitle(sourceName);
         return null;
     }
 
@@ -146,13 +152,12 @@ public class MainActivity extends AppCompatActivity {
         }
         Collections.sort(sourceDisplayed);
 
-        ArrayList<String> categoryList = new ArrayList<>(categoryToName.keySet());
-
-        Collections.sort(categoryList);
-        for (String c : categoryList)
+        sourceCategoriesToName = categoryToName;
+        ArrayList<String> tempList = new ArrayList<>(sourceCategoriesToName.keySet());
+        Collections.sort(tempList);
+        for (String c : tempList)
             opt_menu.add(c);
-
-        setTitle(getTitle() + " (" + newsSourceList.size() + ")");
+        changeTitle();
 
         arrayAdapter = new ArrayAdapter<>(this, R.layout.drawer_item, sourceDisplayed);
         mDrawerList.setAdapter(arrayAdapter);
@@ -162,5 +167,13 @@ public class MainActivity extends AppCompatActivity {
             getSupportActionBar().setHomeButtonEnabled(true);
         }
         return null;
+    }
+
+    private void changeTitle(String... args) {
+        if (args.length > 0) {
+            setTitle(args[0] + " (" + sourceDisplayed.size() + ")");
+        } else {
+            setTitle("News Gateway (" + sourceDisplayed.size() + ")");
+        }
     }
 }
