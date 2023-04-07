@@ -135,13 +135,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public Runnable updateNewsSourceData(ArrayList<NewsSource> newsSourceList) {
-        currentNSourcesList = new ArrayList<>();
         for (NewsSource ns : newsSourceList) {
             sourceDisplayed.add(ns.getName());
             if (!nameToId.containsKey(ns.getName()))
                 nameToId.put(ns.getName(), ns.getId());
         }
         Collections.sort(sourceDisplayed);
+
+        setTitle(getTitle() + " (" + newsSourceList.size() + ")");
 
         arrayAdapter = new ArrayAdapter<>(this, R.layout.drawer_item, sourceDisplayed);
         mDrawerList.setAdapter(arrayAdapter);
