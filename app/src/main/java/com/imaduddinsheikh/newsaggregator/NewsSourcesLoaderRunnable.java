@@ -87,7 +87,6 @@ public class NewsSourcesLoaderRunnable implements Runnable {
     }
 
     private String parseJSON(String s) {
-        Log.d(TAG, "parseJSON: " + s);
 
         try {
             JSONObject jObjMain = new JSONObject(s);
@@ -97,7 +96,6 @@ public class NewsSourcesLoaderRunnable implements Runnable {
 
             for (int i = 0; i < sources.length(); i++) {
                 JSONObject source = sources.getJSONObject(i);
-                Log.d(TAG, "parseJSON: " + source.toString());
 
                 String jId = source.getString("id");
                 String jName = source.getString("name");

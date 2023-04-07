@@ -22,26 +22,32 @@ public class NewsArticlesLoaderRunnable implements Runnable{
 
     private final MainActivity mainActivity;
 
+    private final String sourceId;
+
+    private final String sourceName;
+
     private final ArrayList<NewsArticle> newsArticleList =
             new ArrayList<>();
 
     private static RequestQueue queue;
 
-    private static final String API_URL = "https://newsapi.org/v2/sources";
+    private static final String API_URL = "https://newsapi.org/v2/top-headlines";
     private static final String APIKey = "647ca397f32c4df8a591a2e8320429e5";
 
-    public NewsArticlesLoaderRunnable(MainActivity mainActivity) {
+    public NewsArticlesLoaderRunnable(MainActivity mainActivity, String sourceId, String sourceName) {
         this.mainActivity = mainActivity;
+        this.sourceId = sourceId;
+        this.sourceName = sourceName;
     }
 
     @Override
     public void run() {
         queue = Volley.newRequestQueue(mainActivity);
 
-//        Uri.Builder buildURL = Uri.parse(API_URL).buildUpon();
-//        buildURL.appendQueryParameter("apiKey", APIKey);
-//        String urlToUse = buildURL.toString();
-        String urlToUse = "https://newsapi.org/v2/top-headlines?sources=cnn&apiKey=647ca397f32c4df8a591a2e8320429e5";
+        Uri.Builder buildURL = Uri.parse(API_URL).buildUpon();
+        buildURL.appendQueryParameter("sources", sourceId);
+        buildURL.appendQueryParameter("apiKey", APIKey);
+        String urlToUse = buildURL.toString();
 
         Response.Listener<JSONObject> listener =
                 response -> parseJSON(response.toString());
@@ -77,7 +83,7 @@ public class NewsArticlesLoaderRunnable implements Runnable{
             return;
         }
         mainActivity.runOnUiThread(
-                mainActivity.updateData(newsArticleList));
+                mainActivity.updateData(newsArticleList, sourceId, sourceName));
     }
 
     private String parseJSON(String s) {
@@ -104,9 +110,9 @@ public class NewsArticlesLoaderRunnable implements Runnable{
                 };
 
 
-                newsArticleList.add(new NewsArticle(jAuthor, jTitle, jDescription, jUrl, jImageUrl, jPublishDate, jSource));
+                 newsArticleList.add(new NewsArticle(jAuthor, jTitle, jDescription, jUrl, jImageUrl, jPublishDate, jSource));
             }
-            mainActivity.updateData(newsArticleList);
+            mainActivity.updateData(newsArticleList, this.sourceId, this.sourceName);
         } catch (Exception e) {
             e.printStackTrace();
         }

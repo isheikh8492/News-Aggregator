@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
 
     private ArrayList <NewsSource> currentNSourcesList;
-    private ArrayList <NewsArticle> currentNArticlesList =  new ArrayList<>();
+    private ArrayList <NewsArticle> currentNArticlesList = new ArrayList<>();
 
     private Menu opt_menu;
     private DrawerLayout mDrawerLayout;
@@ -40,10 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private NewsArticleAdapter nArticlesAdapter;
     private ArrayAdapter<String> arrayAdapter;
     private ViewPager2 viewPager;
-
     private final ArrayList<String> sourceDisplayed = new ArrayList<>();
-
-    private final HashMap<String, ArrayList<NewsArticle>> sourceToArticles = new HashMap<>();
 
     private final HashMap<String, String> nameToId = new HashMap<>();
 
@@ -94,37 +91,19 @@ public class MainActivity extends AppCompatActivity {
         String selectedSource = sourceDisplayed.get(position);
         currentNArticlesList.clear();
         String selectedSourceId = nameToId.get(selectedSource);
-        ArrayList<NewsArticle> articles = sourceToArticles.get(selectedSourceId);
-        if (articles == null) {
-            Toast.makeText(this,
-                    MessageFormat.format("No articles found for {0}", selectedSource),
-                    Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        new Thread(new NewsArticlesLoaderRunnable(this)).start();
-
-        currentNArticlesList.addAll(articles);
-        nArticlesAdapter.notifyDataSetChanged();
-        viewPager.setCurrentItem(0);
-
-        mDrawerLayout.closeDrawer(mDrawerList);
-
-        setTitle(selectedSource + " (" + articles.size() + ")");
+        new Thread(new NewsArticlesLoaderRunnable(this, selectedSourceId, selectedSource)).start();
 
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        // Sync the toggle state after onRestoreInstanceState has occurred.
         mDrawerToggle.syncState();
     }
 
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        // Pass any configuration change to the drawer toggls
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -139,37 +118,23 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "downloadFailed: ");
     }
 
-//    public Runnable updateData(ArrayList<NewsSource> nsList) {
-//        for (NewsSource ns : nsList) {
-//            tempList.add(ns.getName());
-//        }
-//        Collections.sort(tempList);
-//
-//        arrayAdapter = new ArrayAdapter<>(this, R.layout.drawer_item, tempList);
-//        mDrawerList.setAdapter(arrayAdapter);
-//        arrayAdapter.notifyDataSetChanged();
-//        setTitle(getTitle() + " (" + arrayAdapter.getCount() + ")");
-//
-//        if (getSupportActionBar() != null) {
-//            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//            getSupportActionBar().setHomeButtonEnabled(true);
-//        }
-//        return null;
-//    }
-
-    public Runnable updateData(ArrayList<NewsArticle> naList) {
+    public Runnable updateData(ArrayList<NewsArticle> naList, String sourceId, String sourceName) {
         currentNArticlesList.addAll(naList);
-        for (NewsArticle na : naList) {
-            if (!sourceToArticles.containsKey(na.getSource()[0]))
-                sourceToArticles.put(na.getSource()[0], new ArrayList<>());
-            Objects.requireNonNull(sourceToArticles.get(na.getSource()[0])).add(na);
+        nArticlesAdapter.notifyDataSetChanged();
+        viewPager.setCurrentItem(0);
 
+        if (currentNArticlesList.isEmpty()) {
+            Toast.makeText(this,
+                    MessageFormat.format("No articles found for {0}", sourceName),
+                    Toast.LENGTH_LONG).show();
         }
+
+        mDrawerLayout.closeDrawer(mDrawerList);
+        setTitle(sourceName + " (" + currentNArticlesList.size() + ")");
         return null;
     }
 
     public Runnable updateNewsSourceData(ArrayList<NewsSource> newsSourceList) {
-        Log.d(TAG, "updateNewsSourceData: " + newsSourceList.toString());
         currentNSourcesList = new ArrayList<>();
         for (NewsSource ns : newsSourceList) {
             sourceDisplayed.add(ns.getName());
@@ -181,12 +146,10 @@ public class MainActivity extends AppCompatActivity {
         arrayAdapter = new ArrayAdapter<>(this, R.layout.drawer_item, sourceDisplayed);
         mDrawerList.setAdapter(arrayAdapter);
         arrayAdapter.notifyDataSetChanged();
-
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
         }
-
         return null;
     }
 }
