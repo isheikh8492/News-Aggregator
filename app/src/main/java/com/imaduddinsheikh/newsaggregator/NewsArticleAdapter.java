@@ -1,5 +1,6 @@
 package com.imaduddinsheikh.newsaggregator;
 
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -14,6 +15,10 @@ import java.util.Locale;
 public class NewsArticleAdapter extends RecyclerView.Adapter<NewsArticleViewHolder> {
     private final MainActivity mainActivity;
     private ArrayList<NewsArticle> newsArticlesList;
+
+    private Typeface titleFont;
+
+    private Typeface descriptionFont;
 
     public NewsArticleAdapter(MainActivity mainActivity, ArrayList<NewsArticle> newsArticlesList) {
         this.mainActivity = mainActivity;
@@ -32,10 +37,15 @@ public class NewsArticleAdapter extends RecyclerView.Adapter<NewsArticleViewHold
     public void onBindViewHolder(@NonNull NewsArticleViewHolder holder, int position) {
         NewsArticle na = newsArticlesList.get(position);
 
+        titleFont = Typeface.createFromAsset(mainActivity.getAssets(), "fonts/Source_Serif_Pro/SourceSerifPro-Bold.ttf");
         holder.naBinding.naTitleTxtView.setText(na.getTitle());
+        holder.naBinding.naTitleTxtView.setTypeface(titleFont);
+
         holder.naBinding.naAuthorTxtView.setText(na.getAuthor());
         holder.naBinding.naDateTxtView.setText(na.getPublishDate());
+        descriptionFont = Typeface.createFromAsset(mainActivity.getAssets(), "fonts/Source_Serif_Pro/SourceSerifPro-Regular.ttf");
         holder.naBinding.naDescriptionTxtView.setText(na.getDescription());
+        holder.naBinding.naDescriptionTxtView.setTypeface(descriptionFont);
 
         if (na.getImageUrl() != null) {
             Picasso.get().load(na.getImageUrl()).error(R.drawable.brokenimage).into(holder.naBinding.naImgView);
