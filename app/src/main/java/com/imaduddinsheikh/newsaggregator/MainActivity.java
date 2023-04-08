@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void changeTitle(String... args) {
         if (args.length > 0) {
-            setTitle(args[0] + " (" + currentNArticlesList.size() + ")");
+            setTitle(args[0]);
         } else {
             setTitle("News Gateway (" + sourceDisplayed.size() + ")");
         }
