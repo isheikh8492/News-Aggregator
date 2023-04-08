@@ -5,9 +5,8 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.bumptech.glide.Glide;
 import com.imaduddinsheikh.newsaggregator.databinding.NewsArticleEntryBinding;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -37,6 +36,12 @@ public class NewsArticleAdapter extends RecyclerView.Adapter<NewsArticleViewHold
         holder.naBinding.naAuthorTxtView.setText(na.getAuthor());
         holder.naBinding.naDateTxtView.setText(na.getPublishDate());
         holder.naBinding.naDescriptionTxtView.setText(na.getDescription());
+
+        if (na.getImageUrl() != null) {
+            Picasso.get().load(na.getImageUrl()).error(R.drawable.brokenimage).into(holder.naBinding.naImgView);
+        } else {
+            holder.naBinding.naImgView.setImageResource(R.drawable.noimage);
+        }
     }
 
     @Override
