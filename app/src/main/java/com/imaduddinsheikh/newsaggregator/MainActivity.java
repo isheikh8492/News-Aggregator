@@ -92,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
             if (sourceCategoriesToName.get(item.getTitle().toString()) != null) {
                 sourceDisplayed.addAll(Objects.requireNonNull(sourceCategoriesToName.get(item.getTitle().toString())));
             }
-            changeTitle();
             arrayAdapter.notifyDataSetChanged();
         } else {
             sourceDisplayed.clear();
