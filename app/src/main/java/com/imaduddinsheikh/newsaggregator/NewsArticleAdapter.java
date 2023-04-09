@@ -1,6 +1,7 @@
 package com.imaduddinsheikh.newsaggregator;
 
 import android.graphics.Typeface;
+import android.os.Build;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.StyleSpan;
@@ -9,12 +10,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 import com.imaduddinsheikh.newsaggregator.databinding.NewsArticleEntryBinding;
 import com.squareup.picasso.Picasso;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Locale;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class NewsArticleAdapter extends RecyclerView.Adapter<NewsArticleViewHolder> {
     private final MainActivity mainActivity;
@@ -37,6 +42,7 @@ public class NewsArticleAdapter extends RecyclerView.Adapter<NewsArticleViewHold
         return new NewsArticleViewHolder(binding);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBindViewHolder(@NonNull NewsArticleViewHolder holder, int position) {
         NewsArticle na = newsArticlesList.get(position);
@@ -51,7 +57,13 @@ public class NewsArticleAdapter extends RecyclerView.Adapter<NewsArticleViewHold
             holder.naBinding.naAuthorTxtView.setVisibility(View.VISIBLE);
             holder.naBinding.naAuthorTxtView.setText(na.getAuthor());
         }
-        holder.naBinding.naDateTxtView.setText(na.getPublishDate());
+        try {
+            holder.naBinding.naDateTxtView.setVisibility(View.VISIBLE);
+            holder.naBinding.naDateTxtView.setText(convertDateTime(na.getPublishDate()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+            holder.naBinding.naDateTxtView.setVisibility(View.GONE);
+        }
         if (na.getDescription().equals("null")) {
             holder.naBinding.naDescriptionTxtView.setVisibility(View.GONE);
         } else {
@@ -84,5 +96,20 @@ public class NewsArticleAdapter extends RecyclerView.Adapter<NewsArticleViewHold
     @Override
     public int getItemCount() {
         return newsArticlesList.size();
+    }
+
+    private static String convertDateTime(String input) throws ParseException {
+        SimpleDateFormat inputFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        inputFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date date = inputFormatter.parse(input);
+
+        // Get the default timezone set on the device
+        TimeZone deviceTimeZone = TimeZone.getDefault();
+
+        // Set the output format and timezone
+        SimpleDateFormat outputFormatter = new SimpleDateFormat("MMM dd, yyyy HH:mm");
+        outputFormatter.setTimeZone(deviceTimeZone);
+
+        return outputFormatter.format(date);
     }
 }
