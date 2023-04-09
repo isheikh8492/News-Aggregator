@@ -1,6 +1,8 @@
 package com.imaduddinsheikh.newsaggregator;
 
+import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Build;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -91,6 +93,27 @@ public class NewsArticleAdapter extends RecyclerView.Adapter<NewsArticleViewHold
         spannableStringBuilder.setSpan(boldSpan2, pageNumber.length() - total.length(), pageNumber.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
         holder.naBinding.naPageNumber.setText(spannableStringBuilder);
+
+        if (!na.getUrl().equals("null")) {
+            holder.naBinding.naTitleTxtView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    clickNAWebsite(v, na.getUrl());
+                }
+            });
+            holder.naBinding.naImgView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    clickNAWebsite(v, na.getUrl());
+                }
+            });
+            holder.naBinding.naDescriptionTxtView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    clickNAWebsite(v, na.getUrl());
+                }
+            });
+        }
     }
 
     @Override
@@ -111,5 +134,13 @@ public class NewsArticleAdapter extends RecyclerView.Adapter<NewsArticleViewHold
         outputFormatter.setTimeZone(deviceTimeZone);
 
         return outputFormatter.format(date);
+    }
+
+    private void clickNAWebsite(View v, String website) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(website));
+        if (intent.resolveActivity(mainActivity.getPackageManager()) != null) {
+            mainActivity.startActivity(intent);
+        }
     }
 }
