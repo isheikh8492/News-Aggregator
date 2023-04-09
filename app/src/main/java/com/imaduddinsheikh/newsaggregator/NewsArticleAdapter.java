@@ -5,6 +5,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -44,11 +45,22 @@ public class NewsArticleAdapter extends RecyclerView.Adapter<NewsArticleViewHold
         holder.naBinding.naTitleTxtView.setText(na.getTitle());
         holder.naBinding.naTitleTxtView.setTypeface(titleFont);
 
-        holder.naBinding.naAuthorTxtView.setText(na.getAuthor());
+        if (na.getAuthor().equals("null")) {
+            holder.naBinding.naAuthorTxtView.setVisibility(View.GONE);
+        } else {
+            holder.naBinding.naAuthorTxtView.setVisibility(View.VISIBLE);
+            holder.naBinding.naAuthorTxtView.setText(na.getAuthor());
+        }
         holder.naBinding.naDateTxtView.setText(na.getPublishDate());
-        descriptionFont = Typeface.createFromAsset(mainActivity.getAssets(), "fonts/Source_Serif_Pro/SourceSerifPro-Regular.ttf");
-        holder.naBinding.naDescriptionTxtView.setText(na.getDescription());
-        holder.naBinding.naDescriptionTxtView.setTypeface(descriptionFont);
+        if (na.getDescription().equals("null")) {
+            holder.naBinding.naDescriptionTxtView.setVisibility(View.GONE);
+        } else {
+            holder.naBinding.naDescriptionTxtView.setVisibility(View.VISIBLE);
+            holder.naBinding.naDescriptionTxtView.setText(na.getDescription());
+            descriptionFont = Typeface.createFromAsset(mainActivity.getAssets(),
+                    "fonts/Source_Serif_Pro/SourceSerifPro-Regular.ttf");
+            holder.naBinding.naDescriptionTxtView.setTypeface(descriptionFont);
+        }
 
         if (na.getImageUrl() != null) {
             Picasso.get().load(na.getImageUrl()).error(R.drawable.brokenimage).into(holder.naBinding.naImgView);
@@ -67,7 +79,6 @@ public class NewsArticleAdapter extends RecyclerView.Adapter<NewsArticleViewHold
         spannableStringBuilder.setSpan(boldSpan2, pageNumber.length() - total.length(), pageNumber.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
         holder.naBinding.naPageNumber.setText(spannableStringBuilder);
-        holder.naBinding.naPageNumber.setText(pageNumber);
     }
 
     @Override

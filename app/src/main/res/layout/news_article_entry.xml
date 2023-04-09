@@ -41,13 +41,15 @@
                     android:id="@+id/naDescriptionTxtView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
                     android:layout_marginTop="5dp"
+                    android:layout_marginEnd="8dp"
                     android:padding="5dp"
                     android:text="Description"
                     android:textSize="17dp"
                     android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="@+id/naImgView"
-                    app:layout_constraintStart_toStartOf="@+id/naAuthorTxtView"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/naImgView" />
 
                 <TextView
