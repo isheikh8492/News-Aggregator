@@ -6,97 +6,131 @@
     android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/naConstraintLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-<!--        <ImageView-->
-<!--            android:id="@+id/naImgView"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="210dp"-->
-<!--            android:layout_marginTop="8dp"-->
-<!--            android:scaleType="fitStart"-->
-<!--            app:layout_constraintEnd_toEndOf="@+id/naAuthorTxtView"-->
-<!--            app:layout_constraintStart_toStartOf="@+id/naAuthorTxtView"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/naAuthorTxtView"-->
-<!--            app:srcCompat="@drawable/noimage" />-->
-
-        <TextView
-            android:id="@+id/naDescriptionTxtView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:padding="5dp"
-            android:text="Description"
-            android:textSize="17dp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@+id/naImgView"
-            app:layout_constraintStart_toStartOf="@+id/naAuthorTxtView"
-            app:layout_constraintTop_toBottomOf="@+id/naImgView" />
-
-        <TextView
-            android:id="@+id/naTitleTxtView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:textAlignment="center"
-            android:textColor="@color/articleTitle"
-            android:textSize="30sp"
-            android:textStyle="bold"
+        <ScrollView
+            android:id="@+id/naScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/naPageNumber"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Title" />
+            app:layout_constraintVertical_chainStyle="spread_inside">
 
-        <com.imaduddinsheikh.newsaggregator.DynamicHeightImageView
-            android:id="@+id/naImgView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:scaleType="fitCenter"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/naAuthorTxtView" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/naConstraintLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/naGuideline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5" />
+
+                <!--        <ImageView-->
+                <!--            android:id="@+id/naImgView"-->
+                <!--            android:layout_width="wrap_content"-->
+                <!--            android:layout_height="210dp"-->
+                <!--            android:layout_marginTop="8dp"-->
+                <!--            android:scaleType="fitStart"-->
+                <!--            app:layout_constraintEnd_toEndOf="@+id/naAuthorTxtView"-->
+                <!--            app:layout_constraintStart_toStartOf="@+id/naAuthorTxtView"-->
+                <!--            app:layout_constraintTop_toBottomOf="@+id/naAuthorTxtView"-->
+                <!--            app:srcCompat="@drawable/noimage" />-->
+
+                <TextView
+                    android:id="@+id/naDescriptionTxtView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:padding="5dp"
+                    android:text="Description"
+                    android:textSize="17dp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="@+id/naImgView"
+                    app:layout_constraintStart_toStartOf="@+id/naAuthorTxtView"
+                    app:layout_constraintTop_toBottomOf="@+id/naImgView" />
+
+                <TextView
+                    android:id="@+id/naTitleTxtView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:textAlignment="center"
+                    android:textColor="@color/articleTitle"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Title" />
+
+                <com.imaduddinsheikh.newsaggregator.DynamicHeightImageView
+                    android:id="@+id/naImgView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/naAuthorTxtView" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/naGuideline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.5" />
+
+                <TextView
+                    android:id="@+id/naAuthorTxtView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:paddingBottom="5dp"
+                    android:textSize="16dp"
+                    android:textStyle="italic"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/naDateTxtView"
+                    tools:text="Author(s)" />
+
+                <TextView
+                    android:id="@+id/naDateTxtView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:padding="5dp"
+                    android:text="Publish Date"
+                    android:textSize="18dp"
+                    android:textStyle="italic"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/naTitleTxtView" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
 
         <TextView
-            android:id="@+id/naAuthorTxtView"
+            android:id="@+id/naPageNumber"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:paddingBottom="5dp"
-            android:textSize="16dp"
-            android:textStyle="italic"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/naDateTxtView"
-            tools:text="Author(s)" />
-
-        <TextView
-            android:id="@+id/naDateTxtView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
+            android:background="@color/purple_500"
             android:padding="5dp"
-            android:text="Publish Date"
-            android:textSize="18dp"
-            android:textStyle="italic"
+            android:text="1 of 10"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="17dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/naTitleTxtView" />
-
+            app:layout_constraintTop_toBottomOf="@+id/naScrollView" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </FrameLayout>

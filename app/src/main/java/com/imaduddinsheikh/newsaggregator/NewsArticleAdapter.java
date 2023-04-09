@@ -1,6 +1,9 @@
 package com.imaduddinsheikh.newsaggregator;
 
 import android.graphics.Typeface;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -52,6 +55,19 @@ public class NewsArticleAdapter extends RecyclerView.Adapter<NewsArticleViewHold
         } else {
             holder.naBinding.naImgView.setImageResource(R.drawable.noimage);
         }
+
+        String current = String.valueOf(position + 1);
+        String total = String.valueOf(getItemCount());
+        String pageNumber = current + " of " + total;
+
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(pageNumber);
+        StyleSpan boldSpan1 = new StyleSpan(Typeface.BOLD);
+        spannableStringBuilder.setSpan(boldSpan1, 0, current.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        StyleSpan boldSpan2 = new StyleSpan(Typeface.BOLD);
+        spannableStringBuilder.setSpan(boldSpan2, pageNumber.length() - total.length(), pageNumber.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+
+        holder.naBinding.naPageNumber.setText(spannableStringBuilder);
+        holder.naBinding.naPageNumber.setText(pageNumber);
     }
 
     @Override
