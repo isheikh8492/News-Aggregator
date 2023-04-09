@@ -7,13 +7,17 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.imaduddinsheikh.newsaggregator.databinding.ActivityMainBinding;
@@ -48,6 +52,10 @@ public class MainActivity extends AppCompatActivity {
 
     private HashMap<String, ArrayList<String>> sourceCategoriesToName
             = new HashMap<>();
+
+    private static HashMap<String, Integer> currentCategoryColor = new HashMap<>();
+
+    private static HashMap<String, String> nameToCategory = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,13 +161,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public Runnable updateNewsSourceData(ArrayList<NewsSource> newsSourceList,
-                                         HashMap<String, ArrayList<String>> categoryToName) {
+                                         HashMap<String, ArrayList<String>> categoryToName,
+                                         HashMap<String, Integer> categoryColor) {
+        for (String category : categoryColor.keySet()) {
+            if (!currentCategoryColor.containsKey(category))
+                currentCategoryColor.put(category, categoryColor.get(category));
+        }
         currentNSourcesList = new ArrayList<>();
         for (NewsSource ns : newsSourceList) {
             sourceDisplayed.add(ns.getName());
             if (!nameToId.containsKey(ns.getName()))
                 nameToId.put(ns.getName(), ns.getId());
             currentNSourcesList.add(ns);
+            if (!nameToCategory.containsKey(ns.getName()))
+                nameToCategory.put(ns.getName(), ns.getCategory());
         }
         Collections.sort(sourceDisplayed);
 
@@ -173,7 +188,8 @@ public class MainActivity extends AppCompatActivity {
         }
         changeTitle();
 
-        arrayAdapter = new ArrayAdapter<>(this, R.layout.drawer_item, sourceDisplayed);
+        arrayAdapter = new SourceDisplayedAdapter(this,
+                sourceDisplayed, currentCategoryColor, nameToCategory);
         mDrawerList.setAdapter(arrayAdapter);
         arrayAdapter.notifyDataSetChanged();
         if (getSupportActionBar() != null) {
