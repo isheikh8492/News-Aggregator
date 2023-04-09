@@ -23,7 +23,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -40,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private NewsArticleAdapter nArticlesAdapter;
     private ArrayAdapter<String> arrayAdapter;
     private ViewPager2 viewPager;
-    private final ArrayList<String> sourceDisplayed = new ArrayList<>();
+    private List<String> sourceDisplayed = new ArrayList<>();
 
     private final HashMap<String, String> nameToId = new HashMap<>();
 
@@ -95,7 +97,10 @@ public class MainActivity extends AppCompatActivity {
             arrayAdapter.notifyDataSetChanged();
         } else {
             sourceDisplayed.clear();
-            new Thread(new NewsSourcesLoaderRunnable(this)).start();
+            for (NewsSource ns : currentNSourcesList) {
+                sourceDisplayed.add(ns.getName());
+            }
+            arrayAdapter.notifyDataSetChanged();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -149,10 +154,12 @@ public class MainActivity extends AppCompatActivity {
 
     public Runnable updateNewsSourceData(ArrayList<NewsSource> newsSourceList,
                                          HashMap<String, ArrayList<String>> categoryToName) {
+        currentNSourcesList = new ArrayList<>();
         for (NewsSource ns : newsSourceList) {
             sourceDisplayed.add(ns.getName());
             if (!nameToId.containsKey(ns.getName()))
                 nameToId.put(ns.getName(), ns.getId());
+            currentNSourcesList.add(ns);
         }
         Collections.sort(sourceDisplayed);
 
