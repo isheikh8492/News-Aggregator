@@ -124,11 +124,18 @@ public class NewsSourcesLoaderRunnable implements Runnable {
 
     private int getCategoryColor(String category) {
         float[] hsl = new float[3];
-        int hash = category.hashCode();
-        float hue = Math.abs(hash % 360);
-
-        if ((hue >= 240 && hue <= 260) || (hue >= 300 && hue <= 320)) {
-            hue = (hue + 60) % 360;
+        float hue;
+        switch (category) {
+            case "health":
+                hue = 30;
+                break;
+            case "science":
+                hue = 200;
+                break;
+            default:
+                int hash = category.hashCode();
+                hue = Math.abs(hash % 360);
+                break;
         }
 
         float saturation = 0.94f; // Saturation between 0 and 1
@@ -137,6 +144,7 @@ public class NewsSourcesLoaderRunnable implements Runnable {
         hsl[0] = hue;
         hsl[1] = saturation;
         hsl[2] = lightness;
+
         int color = ColorUtils.HSLToColor(hsl);
 
         return color;

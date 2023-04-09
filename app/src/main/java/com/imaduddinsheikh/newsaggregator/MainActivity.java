@@ -10,6 +10,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -163,10 +166,7 @@ public class MainActivity extends AppCompatActivity {
     public Runnable updateNewsSourceData(ArrayList<NewsSource> newsSourceList,
                                          HashMap<String, ArrayList<String>> categoryToName,
                                          HashMap<String, Integer> categoryColor) {
-        for (String category : categoryColor.keySet()) {
-            if (!currentCategoryColor.containsKey(category))
-                currentCategoryColor.put(category, categoryColor.get(category));
-        }
+        currentCategoryColor = categoryColor;
         currentNSourcesList = new ArrayList<>();
         for (NewsSource ns : newsSourceList) {
             sourceDisplayed.add(ns.getName());
@@ -183,8 +183,18 @@ public class MainActivity extends AppCompatActivity {
             ArrayList<String> tempList = new ArrayList<>(sourceCategoriesToName.keySet());
             tempList.add(0, "All");
             Collections.sort(tempList);
-            for (String c : tempList)
-                opt_menu.add(c);
+            int itemId = 0;
+            for (String c : tempList) {
+                MenuItem menuItem = opt_menu.add(Menu.NONE, itemId, Menu.NONE, c);
+
+                if (!Objects.equals(c, "All") && currentCategoryColor.containsKey(c)) {
+                    SpannableString spannableString = new SpannableString(c);
+                    ForegroundColorSpan textColorSpan = new ForegroundColorSpan(currentCategoryColor.get(c));
+                    spannableString.setSpan(textColorSpan, 0, spannableString.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                    menuItem.setTitle(spannableString);
+                }
+                itemId++;
+            }
         }
         changeTitle();
 
