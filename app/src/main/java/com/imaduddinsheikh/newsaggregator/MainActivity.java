@@ -60,6 +60,13 @@ public class MainActivity extends AppCompatActivity {
 
     private static HashMap<String, String> nameToCategory = new HashMap<>();
 
+    private List<String> oldSourceDisplayed = new ArrayList<>();
+
+    private ArrayList <NewsSource> oldNSourcesList;
+
+    private int oldArticlePosition;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,12 +113,14 @@ public class MainActivity extends AppCompatActivity {
                 sourceDisplayed.addAll(Objects.requireNonNull(sourceCategoriesToName.get(item.getTitle().toString())));
             }
             arrayAdapter.notifyDataSetChanged();
+            changeTitle();
         } else {
             sourceDisplayed.clear();
             for (NewsSource ns : currentNSourcesList) {
                 sourceDisplayed.add(ns.getName());
             }
             arrayAdapter.notifyDataSetChanged();
+            changeTitle();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -215,5 +224,23 @@ public class MainActivity extends AppCompatActivity {
         } else {
             setTitle("News Gateway (" + sourceDisplayed.size() + ")");
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("currentNSourcesList", currentNSourcesList);
+        outState.putStringArrayList("sourceDisplayed", new ArrayList<>(sourceDisplayed));
+        outState.putInt("viewPagerPosition", viewPager.getCurrentItem());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        // Call super first
+        super.onRestoreInstanceState(savedInstanceState);
+
+        oldSourceDisplayed = savedInstanceState.getStringArrayList("sourceDisplayed");
+        oldNSourcesList = (ArrayList<NewsSource>) savedInstanceState.getSerializable("currentNSourcesList");
+        oldArticlePosition = savedInstanceState.getInt("viewPagerPosition");
     }
 }

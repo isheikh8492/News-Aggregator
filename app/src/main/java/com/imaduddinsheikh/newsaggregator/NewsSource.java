@@ -2,7 +2,9 @@ package com.imaduddinsheikh.newsaggregator;
 
 import androidx.annotation.NonNull;
 
-public class NewsSource {
+import java.io.Serializable;
+
+public class NewsSource implements Serializable {
     private final String id;
     private final String name;
     private final String category;
