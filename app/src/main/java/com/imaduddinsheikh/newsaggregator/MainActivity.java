@@ -60,11 +60,11 @@ public class MainActivity extends AppCompatActivity {
 
     private static HashMap<String, String> nameToCategory = new HashMap<>();
 
-    private List<String> oldSourceDisplayed = new ArrayList<>();
+    private List<String> oldSourceDisplayed;
 
     private ArrayList <NewsSource> oldNSourcesList;
 
-    private int oldArticlePosition;
+    private int oldArticlePosition = -1;
 
 
     @Override
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         setTitle("News Gateway");
 
-        if (currentNSourcesList == null) {
+        if (currentNSourcesList == null || oldNSourcesList == null) {
             new Thread(new NewsSourcesLoaderRunnable(this)).start();
         }
 
@@ -90,8 +90,8 @@ public class MainActivity extends AppCompatActivity {
         );
 
         // Create the drawer toggle
-        mDrawerToggle = new ActionBarDrawerToggle(
-                this,            /* host Activity */
+        mDrawerToggle = new CustomActionBarDrawerToggle(
+                this,                  /* host Activity */
                 mDrawerLayout,         /* DrawerLayout object */
                 R.string.drawer_open,  /* "open drawer" description for accessibility */
                 R.string.drawer_close  /* "close drawer" description for accessibility */
@@ -100,6 +100,10 @@ public class MainActivity extends AppCompatActivity {
         nArticlesAdapter = new NewsArticleAdapter(this, currentNArticlesList);
         viewPager = findViewById(R.id.viewpager);
         viewPager.setAdapter(nArticlesAdapter);
+
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
     }
 
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -107,20 +111,25 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "onOptionsItemSelected: mDrawerToggle " + item);
             return true;
         }
+
         if (!item.getTitle().toString().equals("All")) {
             sourceDisplayed.clear();
             if (sourceCategoriesToName.get(item.getTitle().toString()) != null) {
                 sourceDisplayed.addAll(Objects.requireNonNull(sourceCategoriesToName.get(item.getTitle().toString())));
             }
             arrayAdapter.notifyDataSetChanged();
-            changeTitle();
+            if (viewPager.getCurrentItem() == 0 && getTitle().toString().matches("News Gateway.*")) {
+                changeTitle();
+            }
         } else {
             sourceDisplayed.clear();
             for (NewsSource ns : currentNSourcesList) {
                 sourceDisplayed.add(ns.getName());
             }
             arrayAdapter.notifyDataSetChanged();
-            changeTitle();
+            if (viewPager.getCurrentItem() == 0 && getTitle().toString().matches("News Gateway.*")) {
+                changeTitle();
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -133,6 +142,9 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("NotifyDataSetChanged")
     private void selectItem(int position) {
         viewPager.setBackground(null);
+        if (sourceDisplayed.isEmpty()) {
+            sourceDisplayed = oldSourceDisplayed;
+        }
         String selectedSource = sourceDisplayed.get(position);
         currentNArticlesList.clear();
         String selectedSourceId = nameToId.get(selectedSource);
@@ -185,6 +197,10 @@ public class MainActivity extends AppCompatActivity {
             if (!nameToCategory.containsKey(ns.getName()))
                 nameToCategory.put(ns.getName(), ns.getCategory());
         }
+
+        if (oldSourceDisplayed != null) {
+            sourceDisplayed = oldSourceDisplayed;
+        }
         Collections.sort(sourceDisplayed);
 
         sourceCategoriesToName = categoryToName;
@@ -215,6 +231,7 @@ public class MainActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
         }
+
         return null;
     }
 
