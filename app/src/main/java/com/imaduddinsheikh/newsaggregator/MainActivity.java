@@ -78,9 +78,8 @@ public class MainActivity extends AppCompatActivity {
         if (currentNSourcesList == null || oldNSourcesList == null) {
             new Thread(new NewsSourcesLoaderRunnable(this)).start();
         }
-
-        mDrawerLayout = findViewById(R.id.drawer_layout);
-        mDrawerList = findViewById(R.id.drawer_list);
+        mDrawerLayout = binding.drawerLayout;
+        mDrawerList = binding.drawerList;
 
         mDrawerList.setOnItemClickListener(
                 (parent, view, position, id) -> {
@@ -98,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         );
 
         nArticlesAdapter = new NewsArticleAdapter(this, currentNArticlesList);
-        viewPager = findViewById(R.id.viewpager);
+        viewPager = binding.viewpager;
         viewPager.setAdapter(nArticlesAdapter);
 
         mDrawerLayout.addDrawerListener(mDrawerToggle);
